@@ -459,6 +459,11 @@ const getLoadButtonMarkup = () => `
   <button class="load-more" type="button">load more</button>
 `;
 
+// Values
+const mainContainer = document.querySelector(`.main`);
+const menuContainer = document.querySelector(`.main__control`);
+const CARD_COUNT = 3;
+
 // Render function
 const renderComponent = (markup, container, repeat = 1) => {
   for (let i = 0; i < repeat; i++) {
@@ -467,17 +472,13 @@ const renderComponent = (markup, container, repeat = 1) => {
 };
 
 //
-const mainContainer = document.querySelector(`.main`);
-const menuContainer = document.querySelector(`.main__control`);
-
 renderComponent(getMenuMarkup(), menuContainer);
 renderComponent(getSearchMarkup(), mainContainer);
 renderComponent(getFiltersMarkup(), mainContainer);
 renderComponent(getBoardMarkup(), mainContainer);
 
 const boardContainer = document.querySelector(`.board`);
-const taskListContainer = boardContainer.querySelector(`.board__tasks`);
-const CARD_COUNT = 3;
+const taskListContainer = document.querySelector(`.board__tasks`);
 
 renderComponent(getCardEditMarkup(), taskListContainer);
 renderComponent(getCardMarkup(), taskListContainer, CARD_COUNT);

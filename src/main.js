@@ -1,5 +1,10 @@
 'use strict';
 
+// Values
+const mainContainer = document.querySelector(`.main`);
+const menuContainer = document.querySelector(`.main__control`);
+const CARD_COUNT = 3;
+
 // Components Markup
 const getMenuMarkup = () => `
   <section class="control__btn-wrap">
@@ -458,11 +463,6 @@ const getCardEditMarkup = () => `
 const getLoadButtonMarkup = () => `
   <button class="load-more" type="button">load more</button>
 `;
-
-// Values
-const mainContainer = document.querySelector(`.main`);
-const menuContainer = document.querySelector(`.main__control`);
-const CARD_COUNT = 3;
 
 // Render function
 const renderComponent = (markup, container, repeat = 1) => {

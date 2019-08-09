@@ -465,21 +465,22 @@ const getLoadButtonMarkup = () => `
 `;
 
 // Render function
-const renderComponent = (markup, container, repeat = 1) => {
+const renderComponent = (markup, container, repeat = 1, callback = () => undefined) => {
   for (let i = 0; i < repeat; i++) {
     container.insertAdjacentHTML(`beforeend`, markup);
   }
+  callback();
 };
 
 //
 renderComponent(getMenuMarkup(), menuContainer);
 renderComponent(getSearchMarkup(), mainContainer);
 renderComponent(getFiltersMarkup(), mainContainer);
-renderComponent(getBoardMarkup(), mainContainer);
+renderComponent(getBoardMarkup(), mainContainer, 1, () => {
+  const boardContainer = document.querySelector(`.board`);
+  const taskListContainer = document.querySelector(`.board__tasks`);
 
-const boardContainer = document.querySelector(`.board`);
-const taskListContainer = document.querySelector(`.board__tasks`);
-
-renderComponent(getCardEditMarkup(), taskListContainer);
-renderComponent(getCardMarkup(), taskListContainer, CARD_COUNT);
-renderComponent(getLoadButtonMarkup(), boardContainer);
+  renderComponent(getCardEditMarkup(), taskListContainer);
+  renderComponent(getCardMarkup(), taskListContainer, CARD_COUNT);
+  renderComponent(getLoadButtonMarkup(), boardContainer);
+});

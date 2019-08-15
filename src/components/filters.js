@@ -8,7 +8,7 @@ export const getFiltersMarkup = ({title, setCount}) => `
       checked
     />
     <label for="filter__all" class="filter__label">
-      ${title[0]} <span class="filter__all-count">1</span></label
+      ${title[0]} <span class="filter__all-count">${setCount(`all`)}</span></label
     >
     <input
       type="radio"
@@ -67,7 +67,7 @@ export const getFiltersMarkup = ({title, setCount}) => `
       name="filter"
     />
     <label for="filter__archive" class="filter__label"
-      >Archive <span class="filter__archive-count">115</span></label
+      >Archive <span class="filter__archive-count">${setCount(`isArchive`)}</span></label
     >
   </section>
 `;

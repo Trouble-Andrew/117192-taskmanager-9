@@ -1,3 +1,6 @@
+import {tasks} from './main.js';
+import {shuffle} from './utils.js';
+
 export const getCard = () => ({
   description: [
     `Изучить теорию`,
@@ -5,13 +8,13 @@ export const getCard = () => ({
     `Пройти интенсив на соточку`,
   ][Math.floor(Math.random() * 3)],
   dueDate: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000 - Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
-  tags: new Set([
+  tags: new Set(shuffle([
     `homework`,
     `theory`,
     `practice`,
     `intensive`,
     `keks`,
-  ]),
+  ]).slice(1, 4)),
   repeatingDays: {
     'mo': false,
     'tu': false,
@@ -32,13 +35,6 @@ export const getCard = () => ({
   isArchive: Boolean(Math.round(Math.random())),
 });
 
-// Массив с объектами тасков для проверки
-let tasks = [];
-tasks.push(getCard());
-tasks.push(getCard());
-tasks.push(getCard());
-//
-
 export const getFilter = () => ({
   title: [
     `all`,
@@ -50,8 +46,8 @@ export const getFilter = () => ({
     `archive`,
   ],
   setCount(value) {
-    let count = 0;
 
+    let count = 0;
     switch (value) {
       case `isFavorite`:
         tasks.forEach((task) => task[value] ? count++ : null);
@@ -64,7 +60,7 @@ export const getFilter = () => ({
       case `repeatingDays`:
         tasks.forEach(function (task) {
           let taskArray = Object.keys(task.repeatingDays).map((i) => task.repeatingDays[i]);
-          let days = Object.keys(taskArray).some((day) => taskArray[day]) ? count++ : null;
+          taskArray = Object.keys(taskArray).some((day) => taskArray[day]) ? count++ : null;
         });
         getFilter.count = count;
         return count;
@@ -79,7 +75,6 @@ export const getFilter = () => ({
         count = getFilter.count;
         return count;
       case `today`:
-        // tasks.forEach((task) => task.dueDate ? console.log(task.dueDate) : null);
         tasks.forEach(function (task) {
           let time = new Date(task.dueDate).toDateString();
           let today = new Date().toDateString();
@@ -87,6 +82,14 @@ export const getFilter = () => ({
             count++;
           }
         });
+        getFilter.count = count;
+        return count;
+      case `all`:
+        tasks.forEach((task) => task ? count++ : null);
+        getFilter.count = count;
+        return count;
+      case `isArchive`:
+        tasks.forEach((task) => task.isArchive ? count++ : null);
         getFilter.count = count;
         return count;
     }

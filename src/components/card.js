@@ -40,7 +40,7 @@ export const getCardMarkup = ({description, dueDate, repeatingDays, tags, color}
 
             <div class="card__hashtag">
               <div class="card__hashtag-list">
-                ${Array.from(tags).map((tag) => `<span class="card__hashtag-inner">
+                ${Array.from(tags).slice(0, 3).map((tag) => `<span class="card__hashtag-inner">
                   <span class="card__hashtag-name">
                     #${tag}
                   </span>

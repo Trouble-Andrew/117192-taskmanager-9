@@ -5,8 +5,8 @@ import {getBoardMarkup} from './components/board.js';
 import {getCardMarkup} from './components/card.js';
 import {getCardEditMarkup} from './components/card-edit.js';
 import {getLoadButtonMarkup} from './components/load-button.js';
-import {getFilter} from './data.js';
-import {mockArray} from './mock-array.js';
+import {getFilter, mockArray} from './data.js';
+// import {mockArray} from './data.js';
 
 // Values
 const mainContainer = document.querySelector(`.main`);
@@ -38,7 +38,6 @@ const renderCards = (container, count) => {
   tasksForLoad = tasksForLoad.slice(count);
 };
 
-
 const renderFilters = (container) => {
   container.insertAdjacentHTML(`beforeend`, new Array(1)
     .fill(``)
@@ -68,6 +67,5 @@ renderComponent(getBoardMarkup(), mainContainer, 1, () => {
       loadMoreButton.remove();
     }
   };
-
   loadMoreButton.addEventListener(`click`, loadMoreButtonHandler);
 });

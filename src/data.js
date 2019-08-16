@@ -1,52 +1,35 @@
 import {tasks} from './main.js';
 import {shuffle} from './utils.js';
 
-export const getCard = () => ({
-  description: [
-    `Изучить теорию`,
-    `Сделать домашку`,
-    `Пройти интенсив на соточку`,
-  ][Math.floor(Math.random() * 3)],
+
+export const mockArray = [];
+const description = [`Изучить теорию`, `Сделать домашку`, `Пройти интенсив на соточку`];
+const tags = new Set([`homework`, `theory`, `practice`, `intensive`, `keks`]);
+const repeatingDays = () => ({
+  'mo': false,
+  'tu': false,
+  'we': Boolean(Math.round(Math.random())),
+  'th': false,
+  'fr': false,
+  'sa': false,
+  'su': false,
+});
+const color = new Set([`black`, `yellow`, `blue`, `green`, `pink`]);
+const titleFilter = [`all`, `overdue`, `today`, `favotites`, `repeating`, `tags`, `archive`];
+
+const getCard = () => ({
+  description: description[Math.floor(Math.random() * 3)],
   dueDate: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000 - Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
-  tags: new Set(shuffle([
-    `homework`,
-    `theory`,
-    `practice`,
-    `intensive`,
-    `keks`,
-  ]).slice(1, 4)),
-  repeatingDays: {
-    'mo': false,
-    'tu': false,
-    'we': Boolean(Math.round(Math.random())),
-    'th': false,
-    'fr': false,
-    'sa': false,
-    'su': false,
-  },
-  color: [
-    `black`,
-    `yellow`,
-    `blue`,
-    `green`,
-    `pink`,
-  ][Math.floor(Math.random() * 5)],
+  tags: shuffle(Array.from(tags)).slice(1, 4),
+  repeatingDays: repeatingDays(),
+  color: Array.from(color)[Math.floor(Math.random() * 5)],
   isFavorite: Boolean(Math.round(Math.random())),
   isArchive: Boolean(Math.round(Math.random())),
 });
 
 export const getFilter = () => ({
-  title: [
-    `all`,
-    `overdue`,
-    `today`,
-    `favotites`,
-    `repeating`,
-    `tags`,
-    `archive`,
-  ],
+  title: titleFilter,
   setCount(value) {
-
     let count = 0;
     switch (value) {
       case `isFavorite`:
@@ -96,3 +79,11 @@ export const getFilter = () => ({
     return count;
   }
 });
+
+const addObjToArray = () => {
+  for (let i = 0; i < 22; i++) {
+    mockArray.push(getCard());
+  }
+};
+
+addObjToArray();

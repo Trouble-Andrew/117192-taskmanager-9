@@ -1,12 +1,11 @@
 import {getMenuMarkup} from './components/menu.js';
 import {getSearchMarkup} from './components/search.js';
-import {getFiltersMarkup} from './components/filters.js';
+import {getFiltersMarkup, getFilter} from './components/filters.js';
 import {getBoardMarkup} from './components/board.js';
 import {getCardMarkup} from './components/card.js';
 import {getCardEditMarkup} from './components/card-edit.js';
 import {getLoadButtonMarkup} from './components/load-button.js';
-import {getFilter, mockArray} from './data.js';
-// import {mockArray} from './data.js';
+import mockArray from './data.js';
 
 // Values
 const mainContainer = document.querySelector(`.main`);

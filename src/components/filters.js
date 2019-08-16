@@ -1,3 +1,8 @@
+import mockArray from './../data.js';
+
+const titleFilter = [`all`, `overdue`, `today`, `favotites`, `repeating`, `tags`, `archive`];
+const tasks = mockArray;
+
 export const getFiltersMarkup = ({title, setCount}) => `
   <section class="main__filter filter container">
     <input
@@ -71,3 +76,56 @@ export const getFiltersMarkup = ({title, setCount}) => `
     >
   </section>
 `;
+
+export const getFilter = () => ({
+  title: titleFilter,
+  setCount(value) {
+    let count = 0;
+    switch (value) {
+      case `isFavorite`:
+        tasks.forEach((task) => task[value] ? count++ : null);
+        getFilter.count = count;
+        return count;
+      case `dueDate`:
+        tasks.forEach((task) => task[value] < Date.now() ? count++ : null);
+        getFilter.count = count;
+        return count;
+      case `repeatingDays`:
+        tasks.forEach(function (task) {
+          let taskArray = Object.keys(task.repeatingDays).map((i) => task.repeatingDays[i]);
+          taskArray = Object.keys(taskArray).some((day) => taskArray[day]) ? count++ : null;
+        });
+        getFilter.count = count;
+        return count;
+      case `tags`:
+        let tagsSet = new Set();
+        tasks.forEach(function (task) {
+          for (let elem of task.tags) {
+            tagsSet.add(elem);
+          }
+        });
+        getFilter.count = tagsSet.size;
+        count = getFilter.count;
+        return count;
+      case `today`:
+        tasks.forEach(function (task) {
+          let time = new Date(task.dueDate).toDateString();
+          let today = new Date().toDateString();
+          if (time === today) {
+            count++;
+          }
+        });
+        getFilter.count = count;
+        return count;
+      case `all`:
+        tasks.forEach((task) => task ? count++ : null);
+        getFilter.count = count;
+        return count;
+      case `isArchive`:
+        tasks.forEach((task) => task.isArchive ? count++ : null);
+        getFilter.count = count;
+        return count;
+    }
+    return count;
+  }
+});

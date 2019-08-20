@@ -51,12 +51,14 @@ const renderCard = (taskMock) => {
     }
   };
 
-  task.getElement()
-    .querySelector(`.card__btn--edit`)
-    .addEventListener(`click`, () => {
-      tasksContainer.replaceChild(taskEdit.getElement(), task.getElement());
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
+  task.renderElement(tasksContainer);
+
+  // task.getElement()
+  //   .querySelector(`.card__btn--edit`)
+  //   .addEventListener(`click`, () => {
+  //     tasksContainer.replaceChild(taskEdit.getElement(), task.getElement());
+  //     document.addEventListener(`keydown`, onEscKeyDown);
+  //   });
 
   taskEdit.getElement().querySelector(`textarea`)
     .addEventListener(`focus`, () => {
@@ -83,7 +85,7 @@ const renderCard = (taskMock) => {
       taskEdit.removeElement();
     });
 
-  render(tasksContainer, task.getElement(), Position.BEFOREEND);
+
 };
 
 

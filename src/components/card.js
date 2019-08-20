@@ -1,4 +1,5 @@
 import {createElement} from './../utils.js';
+import {CardEdit} from './card-edit.js';
 
 export class Card {
   constructor({description, dueDate, tags, color, repeatingDays}) {
@@ -22,6 +23,24 @@ export class Card {
     if (this._element) {
       this._element = null;
     }
+  }
+
+  renderElement(container) {
+    container.append(this.getElement());
+
+    const onEscKeyDown = (evt) => {
+      if (evt.key === `Escape` || evt.key === `Esc`) {
+        container.replaceChild(this.getElement(), taskEdit.getElement());
+        document.removeEventListener(`keydown`, onEscKeyDown);
+      }
+    };
+
+    this.getElement()
+      .querySelector(`.card__btn--edit`)
+      .addEventListener(`click`, () => {
+        container.replaceChild(taskEdit.getElement(), this.getElement());
+        document.addEventListener(`keydown`, onEscKeyDown);
+      });
   }
 
   getTemplate() {

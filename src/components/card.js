@@ -1,5 +1,6 @@
 import {createElement} from './../utils.js';
 import {CardEdit} from './card-edit.js';
+import {removeElement} from './../utils.js';
 
 export class Card {
   constructor({description, dueDate, tags, color, repeatingDays}) {
@@ -9,6 +10,9 @@ export class Card {
     this._color = color;
     this._element = null;
     this._repeatingDays = repeatingDays;
+    this._allObj = {description, dueDate, tags, color, repeatingDays};
+    this._taskEdit = new CardEdit(this._allObj);
+    this._tasksContainer = document.querySelector(`.board__tasks`);
   }
 
   getElement() {
@@ -30,7 +34,7 @@ export class Card {
 
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
-        container.replaceChild(this.getElement(), taskEdit.getElement());
+        container.replaceChild(this.getElement(), this._taskEdit.getElement());
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
@@ -38,8 +42,33 @@ export class Card {
     this.getElement()
       .querySelector(`.card__btn--edit`)
       .addEventListener(`click`, () => {
-        container.replaceChild(taskEdit.getElement(), this.getElement());
+        container.replaceChild(this._taskEdit.getElement(), this.getElement());
         document.addEventListener(`keydown`, onEscKeyDown);
+      });
+
+    this._taskEdit.getElement().querySelector(`textarea`)
+      .addEventListener(`focus`, () => {
+        document.removeEventListener(`keydown`, onEscKeyDown);
+      });
+
+    this._taskEdit.getElement().querySelector(`textarea`)
+      .addEventListener(`blur`, () => {
+        document.addEventListener(`keydown`, onEscKeyDown);
+      });
+
+    this._taskEdit.getElement()
+      .querySelector(`.card__save`)
+      .addEventListener(`click`, () => {
+        this._tasksContainer.replaceChild(this.getElement(), this._taskEdit.getElement());
+        document.removeEventListener(`keydown`, onEscKeyDown);
+      });
+
+    this._taskEdit.getElement()
+      .querySelector(`.card__delete`)
+      .addEventListener(`click`, () => {
+        removeElement(this._taskEdit.getElement());
+        document.removeEventListener(`keydown`, onEscKeyDown);
+        this._taskEdit.removeElement();
       });
   }
 

@@ -1,4 +1,4 @@
-import {createElement, checkTasksQuantity} from './../utils.js';
+import {createElement} from './../utils.js';
 import {CardEdit} from './card-edit.js';
 import {removeElement} from './../utils.js';
 
@@ -29,6 +29,17 @@ export class Card {
     }
   }
 
+  checkTasksQuantity() {
+    let boardContainer = document.querySelector(`.board`);
+    let allTasks = boardContainer.querySelectorAll(`.card`);
+    if (allTasks.length === 0) {
+      boardContainer.innerHTML = `<p class="board__no-tasks">
+        Congratulations, all tasks were completed! To create a new click on
+        «add new task» button.
+      </p>`;
+    }
+  }
+
   renderElement(container) {
     container.append(this.getElement());
 
@@ -44,7 +55,6 @@ export class Card {
       .addEventListener(`click`, () => {
         container.replaceChild(this._taskEdit.getElement(), this.getElement());
         document.addEventListener(`keydown`, onEscKeyDown);
-        console.log(this);
       });
 
     this._taskEdit.getElement().querySelector(`textarea`)
@@ -70,7 +80,7 @@ export class Card {
         removeElement(this._taskEdit.getElement());
         document.removeEventListener(`keydown`, onEscKeyDown);
         this._taskEdit.removeElement();
-        checkTasksQuantity();
+        this.checkTasksQuantity();
       });
   }
 

@@ -41,14 +41,3 @@ export const unrender = (element) => {
     element.remove();
   }
 };
-
-export const checkTasksQuantity = () => {
-  let boardContainer = document.querySelector(`.board`);
-  let allTasks = boardContainer.querySelectorAll(`.card`);
-  if (allTasks.length === 0) {
-    boardContainer.innerHTML = `<p class="board__no-tasks">
-      Congratulations, all tasks were completed! To create a new click on
-      «add new task» button.
-    </p>`;
-  }
-};

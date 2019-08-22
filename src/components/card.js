@@ -1,4 +1,4 @@
-import {createElement} from './../utils.js';
+import {createElement, checkTasksQuantity} from './../utils.js';
 import {CardEdit} from './card-edit.js';
 import {removeElement} from './../utils.js';
 
@@ -44,6 +44,7 @@ export class Card {
       .addEventListener(`click`, () => {
         container.replaceChild(this._taskEdit.getElement(), this.getElement());
         document.addEventListener(`keydown`, onEscKeyDown);
+        console.log(this);
       });
 
     this._taskEdit.getElement().querySelector(`textarea`)
@@ -69,6 +70,7 @@ export class Card {
         removeElement(this._taskEdit.getElement());
         document.removeEventListener(`keydown`, onEscKeyDown);
         this._taskEdit.removeElement();
+        checkTasksQuantity();
       });
   }
 

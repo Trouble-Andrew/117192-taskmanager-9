@@ -25,7 +25,7 @@ const getCard = () => ({
 });
 
 const addObjToArray = () => {
-  for (let i = 0; i < 22; i++) {
+  for (let i = 0; i < 1; i++) {
     mockArray.push(getCard());
   }
 };

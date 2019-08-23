@@ -1,5 +1,4 @@
-export const getSearchMarkup = () => `
-  <section class="main__search search container">
+export const getSearchMarkup = () => `<section class="main__search search container">
     <input
       type="text"
       id="search__input"

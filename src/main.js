@@ -1,24 +1,25 @@
 import {getMenuMarkup} from './components/menu.js';
 import {getSearchMarkup} from './components/search.js';
 import {getFiltersMarkup, getFilter} from './components/filters.js';
-import {getBoardMarkup} from './components/board.js';
-import {Card} from './components/card.js';
+import {Board} from './components/board.js';
+import {CardList} from './components/card-list.js';
+import {BoardController} from './controllers/board.js';
+import {createElement, render, Position} from './utils.js';
 import mockArray from './data.js';
 
 // Values
-const mainContainer = document.querySelector(`.main`);
-const menuContainer = document.querySelector(`.main__control`);
-const taskMocks = mockArray;
 export const CARD_COUNT = 9;
 export const tasks = mockArray;
+const mainContainer = document.querySelector(`.main`);
+const menuContainer = document.querySelector(`.main__control`);
+const boardContainer = new Board();
+const cardList = new CardList();
+const cardListContainer = document.querySelector(`.main`);
+const taskMocks = mockArray;
+let tasksContainer = document.querySelector(`.board__tasks`);
+let boardController = new BoardController(tasksContainer, taskMocks);
 
 // Render function
-const renderComponent = (markup, container, repeat = 1, callback = () => null) => {
-  for (let i = 0; i < repeat; i++) {
-    container.insertAdjacentHTML(`beforeend`, markup);
-  }
-  callback();
-};
 
 const renderFilters = (container) => {
   container.insertAdjacentHTML(`beforeend`, new Array(1)
@@ -28,18 +29,12 @@ const renderFilters = (container) => {
     .join(``));
 };
 
-//
-renderComponent(getMenuMarkup(), menuContainer);
-renderComponent(getSearchMarkup(), mainContainer);
+render(menuContainer, createElement(getMenuMarkup()), Position.BEFOREEND);
+render(mainContainer, createElement(getSearchMarkup()), Position.BEFOREEND);
 renderFilters(mainContainer);
+render(mainContainer, boardContainer.getElement(), Position.BEFOREEND);
+render(cardListContainer, cardList.getElement(), Position.BEFOREEND);
 
-renderComponent(getBoardMarkup(), mainContainer, 1, () => {
-});
-
-const renderCard = (taskMock) => {
-  const task = new Card(taskMock);
-  const tasksContainer = document.querySelector(`.board__tasks`);
-  task.renderElement(tasksContainer);
-};
-
-taskMocks.forEach((taskMock) => renderCard(taskMock));
+tasksContainer = document.querySelector(`.board__tasks`);
+boardController = new BoardController(tasksContainer, taskMocks);
+boardController.init();

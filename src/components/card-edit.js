@@ -1,31 +1,13 @@
-import {createElement} from './../utils.js';
+import {CardAbstractComponent} from './card-abstract-component.js';
 
-export class CardEdit {
+export class CardEdit extends CardAbstractComponent {
   constructor({description, dueDate, tags, color, repeatingDays}) {
+    super();
     this._description = description;
     this._dueDate = new Date(dueDate);
     this._tags = tags;
     this._color = color;
-    this._element = null;
     this._repeatingDays = repeatingDays;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    if (this._element) {
-      this._element = null;
-    }
-  }
-
-  renderElement(container) {
-    container.append(this.getElement());
   }
 
   getTemplate() {

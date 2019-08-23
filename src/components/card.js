@@ -29,6 +29,17 @@ export class Card {
     }
   }
 
+  checkTasksQuantity() {
+    let boardContainer = document.querySelector(`.board`);
+    let allTasks = boardContainer.querySelectorAll(`.card`);
+    if (allTasks.length === 0) {
+      boardContainer.innerHTML = `<p class="board__no-tasks">
+        Congratulations, all tasks were completed! To create a new click on
+        «add new task» button.
+      </p>`;
+    }
+  }
+
   renderElement(container) {
     container.append(this.getElement());
 
@@ -69,6 +80,7 @@ export class Card {
         removeElement(this._taskEdit.getElement());
         document.removeEventListener(`keydown`, onEscKeyDown);
         this._taskEdit.removeElement();
+        this.checkTasksQuantity();
       });
   }
 

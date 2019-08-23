@@ -24,11 +24,11 @@ const getCard = () => ({
   isArchive: Boolean(Math.round(Math.random())),
 });
 
-const addObjToArray = () => {
-  for (let i = 0; i < 22; i++) {
+const addObjToArray = (count) => {
+  for (let i = 0; i < count; i++) {
     mockArray.push(getCard());
   }
 };
 
-addObjToArray();
+addObjToArray(10);
 export default mockArray;

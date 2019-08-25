@@ -3,7 +3,8 @@ import {CardList} from './../components/card-list.js';
 import {Card} from './../components/card.js';
 import {CardEdit} from './../components/card-edit.js';
 import {Sort} from './../components/sort.js';
-import {render, Position} from './../utils.js';
+import {LoadButton} from './../components/load-button.js';
+import {render, Position, removeElement} from './../utils.js';
 
 export class BoardController {
   constructor(container, tasks) {
@@ -12,17 +13,25 @@ export class BoardController {
     this._board = new Board();
     this._sort = new Sort();
     this._taskList = new CardList();
+    this._COUNT = 8;
+    this._CARD_COUNT = 8;
+    this._loadBtn = new LoadButton();
   }
 
   init() {
     render(this._container, this._board.getElement(), Position.BEFOREEND);
     render(this._board.getElement(), this._sort.getElement(), Position.AFTERBEGIN);
     render(this._board.getElement(), this._taskList.getElement(), Position.BEFOREEND);
+    render(this._board.getElement(), this._loadBtn.getElement(), Position.BEFOREEND);
 
-    this._tasks.forEach((taskMock) => this._renderTask(taskMock));
+    for (let i = 0; i < this._CARD_COUNT; i++) {
+      this._renderTask(this._tasks[i]);
+    }
 
     this._sort.getElement()
     .addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
+
+    this._loadBtn.getElement().addEventListener(`click`, () => this._onloadMoreButtonClick());
   }
 
   _renderTask(task) {
@@ -84,6 +93,18 @@ export class BoardController {
       case `default`:
         this._tasks.forEach((taskMock) => this._renderTask(taskMock));
         break;
+    }
+  }
+
+  _onloadMoreButtonClick() {
+    for (let i = 0; i < this._CARD_COUNT; i++) {
+      if (this._tasks[this._COUNT + 1]) {
+        this._renderTask(this._tasks[this._COUNT + 1]);
+        this._COUNT += 1;
+      } else {
+        removeElement(this._loadBtn.getElement());
+        this._loadBtn.removeElement();
+      }
     }
   }
 }

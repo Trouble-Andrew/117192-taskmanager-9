@@ -1,32 +1,13 @@
-import {createElement} from './../utils.js';
 import {CardEdit} from './card-edit.js';
-import {removeElement} from './../utils.js';
+import {CardComponent} from './card-component.js';
 
-export class Card {
+export class Card extends CardComponent {
+
   constructor({description, dueDate, tags, color, repeatingDays}) {
-    this._description = description;
-    this._dueDate = new Date(dueDate);
-    this._tags = tags;
-    this._color = color;
-    this._element = null;
-    this._repeatingDays = repeatingDays;
+    super({description, dueDate, tags, color, repeatingDays});
     this._allObj = {description, dueDate, tags, color, repeatingDays};
     this._taskEdit = new CardEdit(this._allObj);
     this._tasksContainer = document.querySelector(`.board__tasks`);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    if (this._element) {
-      this._element = null;
-    }
   }
 
   checkTasksQuantity() {
@@ -38,50 +19,6 @@ export class Card {
         «add new task» button.
       </p>`;
     }
-  }
-
-  renderElement(container) {
-    container.append(this.getElement());
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        container.replaceChild(this.getElement(), this._taskEdit.getElement());
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    this.getElement()
-      .querySelector(`.card__btn--edit`)
-      .addEventListener(`click`, () => {
-        container.replaceChild(this._taskEdit.getElement(), this.getElement());
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
-
-    this._taskEdit.getElement().querySelector(`textarea`)
-      .addEventListener(`focus`, () => {
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      });
-
-    this._taskEdit.getElement().querySelector(`textarea`)
-      .addEventListener(`blur`, () => {
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
-
-    this._taskEdit.getElement()
-      .querySelector(`.card__save`)
-      .addEventListener(`click`, () => {
-        this._tasksContainer.replaceChild(this.getElement(), this._taskEdit.getElement());
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      });
-
-    this._taskEdit.getElement()
-      .querySelector(`.card__delete`)
-      .addEventListener(`click`, () => {
-        removeElement(this._taskEdit.getElement());
-        document.removeEventListener(`keydown`, onEscKeyDown);
-        this._taskEdit.removeElement();
-        this.checkTasksQuantity();
-      });
   }
 
   getTemplate() {

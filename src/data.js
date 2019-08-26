@@ -30,5 +30,5 @@ const addObjToArray = (count) => {
   }
 };
 
-addObjToArray(10);
+addObjToArray(20);
 export default mockArray;

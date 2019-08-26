@@ -1,6 +1,6 @@
 import {createElement} from './../utils.js';
 
-export class CardAbstractComponent {
+export class AbstractComponent {
   constructor() {
     this._element = null;
   }

@@ -1,14 +1,10 @@
 import {CardEdit} from './card-edit.js';
-import {CardAbstractComponent} from './card-abstract-component.js';
+import {CardComponent} from './card-component.js';
 
-export class Card extends CardAbstractComponent {
+export class Card extends CardComponent {
+
   constructor({description, dueDate, tags, color, repeatingDays}) {
-    super();
-    this._description = description;
-    this._dueDate = new Date(dueDate);
-    this._tags = tags;
-    this._color = color;
-    this._repeatingDays = repeatingDays;
+    super({description, dueDate, tags, color, repeatingDays});
     this._allObj = {description, dueDate, tags, color, repeatingDays};
     this._taskEdit = new CardEdit(this._allObj);
     this._tasksContainer = document.querySelector(`.board__tasks`);

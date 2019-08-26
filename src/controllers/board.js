@@ -13,7 +13,7 @@ export class BoardController {
     this._board = new Board();
     this._sort = new Sort();
     this._taskList = new CardList();
-    this._COUNT = 8;
+    this._countVariable = 8;
     this._CARD_COUNT = 8;
     this._loadBtn = new LoadButton();
   }
@@ -98,9 +98,9 @@ export class BoardController {
 
   _onloadMoreButtonClick() {
     for (let i = 0; i < this._CARD_COUNT; i++) {
-      if (this._tasks[this._COUNT + 1]) {
-        this._renderTask(this._tasks[this._COUNT + 1]);
-        this._COUNT += 1;
+      if (this._tasks[this._countVariable + 1]) {
+        this._renderTask(this._tasks[this._countVariable + 1]);
+        this._countVariable += 1;
       } else {
         removeElement(this._loadBtn.getElement());
         this._loadBtn.removeElement();

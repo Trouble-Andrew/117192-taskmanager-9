@@ -1,6 +1,6 @@
-import {CardAbstractComponent} from './card-abstract-component.js';
+import {AbstractComponent} from './abstract-component.js';
 
-export class Board extends CardAbstractComponent {
+export class Board extends AbstractComponent {
   getTemplate() {
     return `<section class="board container"></section>`;
   }

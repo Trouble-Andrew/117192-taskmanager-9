@@ -31,7 +31,6 @@ render(menuContainer, createElement(getMenuMarkup()), Position.BEFOREEND);
 render(mainContainer, createElement(getSearchMarkup()), Position.BEFOREEND);
 renderFilters(mainContainer);
 render(mainContainer, boardContainer.getElement(), Position.BEFOREEND);
-// render(cardListContainer, cardList.getElement(), Position.BEFOREEND);
 
 tasksContainer = document.querySelector(`.board__tasks`);
 boardContainerMarkup = document.querySelector(`.board`);

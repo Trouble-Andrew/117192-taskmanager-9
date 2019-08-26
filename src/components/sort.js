@@ -1,6 +1,6 @@
-import {CardAbstractComponent} from './card-abstract-component.js';
+import {AbstractComponent} from './abstract-component.js';
 
-export class Sort extends CardAbstractComponent {
+export class Sort extends AbstractComponent {
   getTemplate() {
     return `<div class="board__filter-list">
         <a href="#" data-sort-type="default" class="board__filter">SORT BY DEFAULT</a>

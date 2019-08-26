@@ -1,13 +1,8 @@
-import {CardAbstractComponent} from './card-abstract-component.js';
+import {CardComponent} from './card-component.js';
 
-export class CardEdit extends CardAbstractComponent {
+export class CardEdit extends CardComponent {
   constructor({description, dueDate, tags, color, repeatingDays}) {
-    super();
-    this._description = description;
-    this._dueDate = new Date(dueDate);
-    this._tags = tags;
-    this._color = color;
-    this._repeatingDays = repeatingDays;
+    super({description, dueDate, tags, color, repeatingDays});
   }
 
   getTemplate() {

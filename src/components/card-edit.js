@@ -1,9 +1,12 @@
 import {CardComponent} from './card-component.js';
-import {removeElement} from './../utils.js';
+import {DateField} from './date.js';
+import {removeElement, render, Position} from './../utils.js';
+import flatpickr from 'flatpickr';
 
 export class CardEdit extends CardComponent {
   constructor(params) {
     super(params);
+    // this.dateField = new DateField(this._dateSwitch, this._dueDate);
     this._subscribeOnEvents();
     this._removeTag();
     this._toggleDate();
@@ -47,24 +50,32 @@ export class CardEdit extends CardComponent {
   _toggleDate() {
     const board = document.querySelector(`.board__tasks`);
     let dateToggler = this.getElement().querySelector(`.card__date-deadline-toggle`);
-    let dateFieldEdit = this.getElement().querySelector(`.card__date-deadline`);
     let dateField = this.getElement().querySelector(`.card__dates`);
+    let repeatSwitch = this.getElement().querySelector(`.card__repeat-toggle`);
+
     this.getElement()
       .querySelector(`.card__date-deadline-toggle`).addEventListener(`click`, () => {
         if (dateToggler.querySelector(`.card__date-status`).innerHTML === `yes`) {
+          let dateFieldEdit = this.getElement().querySelector(`.card__date-deadline`);
           dateToggler.querySelector(`.card__date-status`).innerHTML = `no`;
           this._dueDate = null;
           this._dateSwitch = false;
-          // removeElement(dateFieldEdit);
-          dateFieldEdit.classList.add(`visually-hidden`);
-          console.log(this);
+          removeElement(dateFieldEdit);
         } else {
+          let dateFieldEdit = this.getElement().querySelector(`.card__date-deadline`);
           dateToggler.querySelector(`.card__date-status`).innerHTML = `yes`;
           this._dueDate = Date.now();
-          this._dateSwitch = true;
-          dateFieldEdit.classList.remove(`visually-hidden`);
           console.log(this._dueDate);
-          console.log(new Date(this._dueDate));
+          this._dateSwitch = true;
+          this.dateField = new DateField(this._dueDate);
+          console.log(this.getElement());
+          console.log(dateFieldEdit);
+          this.getElement().querySelector(`.card__dates`).insertBefore(this.dateField.getElement(), repeatSwitch);
+          flatpickr(this.getElement().querySelector(`.card__date`), {
+            altInput: true,
+            allowInput: true,
+            defaultDate: this._dueDate,
+          });
           document.querySelector(`.card__date-status`).innerHTML = `yes`;
         }
       });
@@ -151,7 +162,7 @@ export class CardEdit extends CardComponent {
                       <button class="card__date-deadline-toggle" type="button">
                         date: <span class="card__date-status">${this._dateSwitch === true ? `yes` : `no`}</span>
                       </button>
-                      <fieldset class="card__date-deadline ${this._dateSwitch === true ? `` : `visually-hidden`}">
+                      ${this._dateSwitch === true ? `<fieldset class="card__date-deadline">
                         <label class="card__input-deadline-wrap">
                           <input
                             class="card__date"
@@ -161,7 +172,7 @@ export class CardEdit extends CardComponent {
                             value="${this._dueDate === true ? this._dueDate.toDateString() : ``} ${this._dueDate === true ? this._dueDate.getHours() : ``} ${this._dueDate === true ? this._dueDate.getMinutes() : ``}"
                           />
                         </label>
-                      </fieldset>
+                      </fieldset>` : ``}
                       <button class="card__repeat-toggle" type="button">
                         repeat:<span class="card__repeat-status">${Object.values(this._repeatingDays).some((it) => it === true) ? `yes` : `no`}</span>
                       </button>

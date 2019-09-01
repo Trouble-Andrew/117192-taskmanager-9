@@ -49,14 +49,14 @@ export class Card extends CardComponent {
 
                 <div class="card__settings">
                   <div class="card__details">
-                    <div class="card__dates ${this._dateSwitch === true ? `` : `visually-hidden`}">
+                    ${this._dateSwitch === true ? `<div class="card__dates">
                       <div class="card__date-deadline">
                         <p class="card__input-deadline-wrap">
                           <span class="card__date">${this._dateSwitch === true ? this._dueDate.toDateString() : ``}</span>
                           <span class="card__time">${this._dateSwitch === true ? this._dueDate.getHours() : ``}:${this._dateSwitch === true ? this._dueDate.getMinutes() : ``}</span>
                         </p>
                       </div>
-                    </div>
+                    </div>` : ``}
                     <div class="card__hashtag">
                       <div class="card__hashtag-list">
                         ${(Array.from(this._tags).map((tag) => (`

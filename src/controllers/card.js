@@ -26,11 +26,20 @@ export class CardController {
     // console.log(this);
     render(this._cardView.getElement().querySelector(`.card__control`), this._editBtn.getElement(), Position.AFTERBEGIN);
 
-    flatpickr(this._cardEdit.getElement().querySelector(`.card__date`), {
-      altInput: true,
-      allowInput: true,
-      defaultDate: this._data.dueDate,
-    });
+    // console.log(this._data.dueDate);
+    if (this._data.dueDate !== null) {
+      flatpickr(this._cardEdit.getElement().querySelector(`.card__date`), {
+        altInput: true,
+        allowInput: true,
+        defaultDate: this._data.dueDate,
+      });
+    }
+
+    // flatpickr(this._cardEdit.getElement().querySelector(`.card__date`), {
+    //   altInput: true,
+    //   allowInput: true,
+    //   defaultDate: this._data.dueDate,
+    // });
 
     this._editBtn.addEvent(`click`, this._openEditCard.bind(this));
 
@@ -93,6 +102,7 @@ export class CardController {
     evt.preventDefault();
     this._onChangeView();
     this._container.getElement().replaceChild(this._cardEdit.getElement(), this._cardView.getElement());
+
     render(this._cardEdit.getElement().querySelector(`.card__status-btns`), this._saveBtn.getElement(), Position.BEFOREEND);
     render(this._cardEdit.getElement().querySelector(`.card__status-btns`), this._deleteBtn.getElement(), Position.BEFOREEND);
     document.addEventListener(`keydown`, this._onEscKeyDown.bind(this));

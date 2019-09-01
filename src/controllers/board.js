@@ -30,10 +30,9 @@ export class BoardController {
       this._renderTask(this._tasks[i]);
     }
 
-    this._sort.getElement()
-    .addEventListener(`click`, (evt) => this._onSortLinkClick(evt));
+    this._sort.addEvent(`click`, this._onSortLinkClick.bind(this));
 
-    this._loadBtn.getElement().addEventListener(`click`, () => this._onloadMoreButtonClick());
+    this._loadBtn.addEvent(`click`, this._onloadMoreButtonClick.bind(this));
   }
 
   _renderBoard(tasks) {
@@ -48,7 +47,7 @@ export class BoardController {
         this._renderTask(tasks[i]);
       }
       render(this._board.getElement(), this._loadBtn.getElement(), Position.BEFOREEND);
-      this._loadBtn.getElement().addEventListener(`click`, () => this._onloadMoreButtonClick());
+      this._loadBtn.addEvent(`click`, this._onloadMoreButtonClick.bind(this));
     } else {
       this._tasks.forEach((task) => this._renderTask(task));
     }
@@ -57,6 +56,7 @@ export class BoardController {
   _renderTask(task) {
     const taskController = new CardController(this._taskList, task, this._onDataChange, this._onChangeView);
     this._subscriptions.push(taskController.setDefaultView.bind(taskController));
+    task.dueDate = task.dateSwitch === false ? null : task.dueDate;
   }
 
   _onChangeView() {

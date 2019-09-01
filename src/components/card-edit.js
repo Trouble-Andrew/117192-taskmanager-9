@@ -45,15 +45,27 @@ export class CardEdit extends CardComponent {
   }
 
   _toggleDate() {
+    const board = document.querySelector(`.board__tasks`);
     let dateToggler = this.getElement().querySelector(`.card__date-deadline-toggle`);
+    let dateFieldEdit = this.getElement().querySelector(`.card__date-deadline`);
+    let dateField = this.getElement().querySelector(`.card__dates`);
     this.getElement()
       .querySelector(`.card__date-deadline-toggle`).addEventListener(`click`, () => {
         if (dateToggler.querySelector(`.card__date-status`).innerHTML === `yes`) {
           dateToggler.querySelector(`.card__date-status`).innerHTML = `no`;
-          this.dueDate = null;
+          this._dueDate = null;
+          this._dateSwitch = false;
+          // removeElement(dateFieldEdit);
+          dateFieldEdit.classList.add(`visually-hidden`);
+          console.log(this);
         } else {
           dateToggler.querySelector(`.card__date-status`).innerHTML = `yes`;
-          this.dueDate = this.dueDate;
+          this._dueDate = Date.now();
+          this._dateSwitch = true;
+          dateFieldEdit.classList.remove(`visually-hidden`);
+          console.log(this._dueDate);
+          console.log(new Date(this._dueDate));
+          document.querySelector(`.card__date-status`).innerHTML = `yes`;
         }
       });
   }
@@ -72,17 +84,32 @@ export class CardEdit extends CardComponent {
     const card = this;
     const repeatToggler = this.getElement().querySelector(`.card__repeat-toggle`);
     const repeatDays = this.getElement().querySelectorAll(`.card__repeat-day-input`);
+    const repeatDaysField = this.getElement().querySelector(`.card__repeat-days`);
     repeatToggler.addEventListener(`click`, () => {
       if (repeatToggler.querySelector(`.card__repeat-status`).innerHTML === `yes`) {
         repeatToggler.querySelector(`.card__repeat-status`).innerHTML = `no`;
         repeatDays.forEach(function (day) {
           day.checked = false;
         });
+        repeatDaysField.classList.add(`visually-hidden`);
         card.getElement().className = `card card--edit card--${card._color}`;
       } else {
         repeatToggler.querySelector(`.card__repeat-status`).innerHTML = `yes`;
         card.getElement().className = `card card--edit card--${card._color} card--repeat`;
+        repeatDaysField.classList.remove(`visually-hidden`);
+        repeatDays.forEach(function (day) {
+          day.checked = true;
+        });
       }
+    });
+    repeatDays.forEach(function (day) {
+      day.addEventListener(`click`, () => {
+        if (Array.from(repeatDays).some((it) => it.checked === true)) {
+          card.getElement().className = `card card--edit card--${card._color} card--repeat`;
+        } else {
+          card.getElement().className = `card card--edit card--${card._color}`;
+        }
+      });
     });
   }
 
@@ -122,26 +149,23 @@ export class CardEdit extends CardComponent {
                   <div class="card__details">
                     <div class="card__dates">
                       <button class="card__date-deadline-toggle" type="button">
-                        date: <span class="card__date-status">yes</span>
+                        date: <span class="card__date-status">${this._dateSwitch === true ? `yes` : `no`}</span>
                       </button>
-
-                      <fieldset class="card__date-deadline">
+                      <fieldset class="card__date-deadline ${this._dateSwitch === true ? `` : `visually-hidden`}">
                         <label class="card__input-deadline-wrap">
                           <input
                             class="card__date"
                             type="text"
                             placeholder=""
                             name="date"
-                            value="${this._dueDate.toDateString()} ${this._dueDate.getHours()}:${this._dueDate.getMinutes()}"
+                            value="${this._dueDate === true ? this._dueDate.toDateString() : ``} ${this._dueDate === true ? this._dueDate.getHours() : ``} ${this._dueDate === true ? this._dueDate.getMinutes() : ``}"
                           />
                         </label>
                       </fieldset>
-
                       <button class="card__repeat-toggle" type="button">
                         repeat:<span class="card__repeat-status">${Object.values(this._repeatingDays).some((it) => it === true) ? `yes` : `no`}</span>
                       </button>
-
-                      <fieldset class="card__repeat-days">
+                      <fieldset class="card__repeat-days ${Object.values(this._repeatingDays).some((it) => it === true) === true ? `` : `visually-hidden`}">
                         <div class="card__repeat-days-inner">
                           <input
                             class="visually-hidden card__repeat-day-input"
@@ -329,8 +353,7 @@ export class CardEdit extends CardComponent {
                 </div>
 
                 <div class="card__status-btns">
-                  <button class="card__save" type="submit">save</button>
-                  <button class="card__delete" type="button">delete</button>
+
                 </div>
               </div>
             </form>

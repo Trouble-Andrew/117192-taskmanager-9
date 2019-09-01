@@ -22,6 +22,8 @@ const getCard = () => ({
   color: Array.from(color)[Math.floor(Math.random() * 5)],
   isFavorite: Boolean(Math.round(Math.random())),
   isArchive: Boolean(Math.round(Math.random())),
+  dateSwitch: Boolean(Math.round(Math.random())),
+  repeatSwitch: Boolean(Math.round(Math.random())),
 });
 
 const addObjToArray = (count) => {

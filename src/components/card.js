@@ -3,8 +3,8 @@ import {CardComponent} from './card-component.js';
 
 export class Card extends CardComponent {
 
-  constructor({description, dueDate, tags, color, repeatingDays}) {
-    super({description, dueDate, tags, color, repeatingDays});
+  constructor({description, dueDate, tags, color, repeatingDays, dateSwitch, repeatSwitch}) {
+    super({description, dueDate, tags, color, repeatingDays, dateSwitch, repeatSwitch});
     this._allObj = {description, dueDate, tags, color, repeatingDays};
     this._taskEdit = new CardEdit(this._allObj);
     this._tasksContainer = document.querySelector(`.board__tasks`);
@@ -26,9 +26,6 @@ export class Card extends CardComponent {
             <div class="card__form">
               <div class="card__inner">
                 <div class="card__control">
-                  <button type="button" class="card__btn card__btn--edit">
-                    edit
-                  </button>
                   <button type="button" class="card__btn card__btn--archive">
                     archive
                   </button>
@@ -52,15 +49,14 @@ export class Card extends CardComponent {
 
                 <div class="card__settings">
                   <div class="card__details">
-                    <div class="card__dates">
+                    <div class="card__dates ${this._dateSwitch === true ? `` : `visually-hidden`}">
                       <div class="card__date-deadline">
                         <p class="card__input-deadline-wrap">
-                          <span class="card__date">${this._dueDate.toDateString()}</span>
-                          <span class="card__time">${this._dueDate.getHours()}:${this._dueDate.getMinutes()}</span>
+                          <span class="card__date">${this._dateSwitch === true ? this._dueDate.toDateString() : ``}</span>
+                          <span class="card__time">${this._dateSwitch === true ? this._dueDate.getHours() : ``}:${this._dateSwitch === true ? this._dueDate.getMinutes() : ``}</span>
                         </p>
                       </div>
                     </div>
-
                     <div class="card__hashtag">
                       <div class="card__hashtag-list">
                         ${(Array.from(this._tags).map((tag) => (`

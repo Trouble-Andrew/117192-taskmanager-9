@@ -5,6 +5,8 @@ import {Board} from './components/board.js';
 import {BoardController} from './controllers/board.js';
 import {createElement, render, Position} from './utils.js';
 import mockArray from './data.js';
+import 'flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/themes/light.css';
 
 // Values
 export const CARD_COUNT = 9;
@@ -14,7 +16,6 @@ const menuContainer = document.querySelector(`.main__control`);
 const boardContainer = new Board();
 const taskMocks = mockArray;
 let tasksContainer = document.querySelector(`.board__tasks`);
-let boardContainerMarkup = document.querySelector(`.board`);
 let boardController = new BoardController(tasksContainer, taskMocks);
 
 // Render function
@@ -32,8 +33,5 @@ render(mainContainer, createElement(getSearchMarkup()), Position.BEFOREEND);
 renderFilters(mainContainer);
 render(mainContainer, boardContainer.getElement(), Position.BEFOREEND);
 
-tasksContainer = document.querySelector(`.board__tasks`);
-boardContainerMarkup = document.querySelector(`.board`);
-
-boardController = new BoardController(boardContainerMarkup, taskMocks);
+boardController = new BoardController(mainContainer, taskMocks);
 boardController.init();

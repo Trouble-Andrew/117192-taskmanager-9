@@ -23,10 +23,8 @@ export class CardController {
   }
 
   create() {
-    // console.log(this);
     render(this._cardView.getElement().querySelector(`.card__control`), this._editBtn.getElement(), Position.AFTERBEGIN);
 
-    // console.log(this._data.dueDate);
     if (this._data.dueDate !== null) {
       flatpickr(this._cardEdit.getElement().querySelector(`.card__date`), {
         altInput: true,
@@ -34,12 +32,6 @@ export class CardController {
         defaultDate: this._data.dueDate,
       });
     }
-
-    // flatpickr(this._cardEdit.getElement().querySelector(`.card__date`), {
-    //   altInput: true,
-    //   allowInput: true,
-    //   defaultDate: this._data.dueDate,
-    // });
 
     this._editBtn.addEvent(`click`, this._openEditCard.bind(this));
 
@@ -75,12 +67,14 @@ export class CardController {
   _saveEditCard(evt) {
     evt.preventDefault();
     const formData = new FormData(this._cardEdit.getElement().querySelector(`.card__form`));
+    let dateSwitch = this._cardEdit.getElement().querySelector(`.card__date-status`).innerHTML === `yes` ? true : false;
+    let dateField = dateSwitch === true ? new Date(formData.get(`date`)) : null;
     const entry = {
       description: formData.get(`text`),
       color: formData.get(`color`),
       tags: new Set(formData.getAll(`hashtag`)),
-      dueDate: new Date(formData.get(`date`)),
-      dateSwitch: this._cardEdit.getElement().querySelector(`.card__date-status`).innerHTML === `yes` ? true : false,
+      dateSwitch,
+      dueDate: dateField,
       repeatingDays: formData.getAll(`repeat`).reduce((acc, it) => {
         acc[it] = true;
         return acc;

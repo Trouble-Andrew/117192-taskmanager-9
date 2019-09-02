@@ -1,12 +1,12 @@
 import {CardComponent} from './card-component.js';
 import {DateField} from './date.js';
+import {RepeatField} from './repeat.js';
 import {removeElement, render, Position} from './../utils.js';
 import flatpickr from 'flatpickr';
 
 export class CardEdit extends CardComponent {
   constructor(params) {
     super(params);
-    // this.dateField = new DateField(this._dateSwitch, this._dueDate);
     this._subscribeOnEvents();
     this._removeTag();
     this._toggleDate();
@@ -48,9 +48,7 @@ export class CardEdit extends CardComponent {
   }
 
   _toggleDate() {
-    const board = document.querySelector(`.board__tasks`);
     let dateToggler = this.getElement().querySelector(`.card__date-deadline-toggle`);
-    let dateField = this.getElement().querySelector(`.card__dates`);
     let repeatSwitch = this.getElement().querySelector(`.card__repeat-toggle`);
 
     this.getElement()
@@ -58,19 +56,15 @@ export class CardEdit extends CardComponent {
         if (dateToggler.querySelector(`.card__date-status`).innerHTML === `yes`) {
           let dateFieldEdit = this.getElement().querySelector(`.card__date-deadline`);
           dateToggler.querySelector(`.card__date-status`).innerHTML = `no`;
-          this._dueDate = null;
-          this._dateSwitch = false;
           removeElement(dateFieldEdit);
+          this._dateSwitch = false;
+          this._dueDate = null;
         } else {
-          let dateFieldEdit = this.getElement().querySelector(`.card__date-deadline`);
           dateToggler.querySelector(`.card__date-status`).innerHTML = `yes`;
+          this._dateField = new DateField(this._dueDate);
+          this.getElement().querySelector(`.card__dates`).insertBefore(this._dateField.getElement(), repeatSwitch);
           this._dueDate = Date.now();
-          console.log(this._dueDate);
           this._dateSwitch = true;
-          this.dateField = new DateField(this._dueDate);
-          console.log(this.getElement());
-          console.log(dateFieldEdit);
-          this.getElement().querySelector(`.card__dates`).insertBefore(this.dateField.getElement(), repeatSwitch);
           flatpickr(this.getElement().querySelector(`.card__date`), {
             altInput: true,
             allowInput: true,
@@ -94,21 +88,23 @@ export class CardEdit extends CardComponent {
   _toggleRepeat() {
     const card = this;
     const repeatToggler = this.getElement().querySelector(`.card__repeat-toggle`);
-    const repeatDays = this.getElement().querySelectorAll(`.card__repeat-day-input`);
-    const repeatDaysField = this.getElement().querySelector(`.card__repeat-days`);
+    let repeatDays = this.getElement().querySelectorAll(`.card__repeat-day-input`);
     repeatToggler.addEventListener(`click`, () => {
       if (repeatToggler.querySelector(`.card__repeat-status`).innerHTML === `yes`) {
+        let repeatDaysField = this.getElement().querySelector(`.card__repeat-days`);
         repeatToggler.querySelector(`.card__repeat-status`).innerHTML = `no`;
         repeatDays.forEach(function (day) {
           day.checked = false;
         });
-        repeatDaysField.classList.add(`visually-hidden`);
+        removeElement(repeatDaysField);
         card.getElement().className = `card card--edit card--${card._color}`;
       } else {
+        this._repeatField = new RepeatField(this._repeatingDays);
         repeatToggler.querySelector(`.card__repeat-status`).innerHTML = `yes`;
         card.getElement().className = `card card--edit card--${card._color} card--repeat`;
-        repeatDaysField.classList.remove(`visually-hidden`);
-        repeatDays.forEach(function (day) {
+        render(this.getElement().querySelector(`.card__dates`), this._repeatField.getElement(), Position.BEFOREEND);
+        let repeatDays1 = this.getElement().querySelectorAll(`.card__repeat-day-input`);
+        repeatDays1.forEach(function (day) {
           day.checked = true;
         });
       }
@@ -176,7 +172,7 @@ export class CardEdit extends CardComponent {
                       <button class="card__repeat-toggle" type="button">
                         repeat:<span class="card__repeat-status">${Object.values(this._repeatingDays).some((it) => it === true) ? `yes` : `no`}</span>
                       </button>
-                      <fieldset class="card__repeat-days ${Object.values(this._repeatingDays).some((it) => it === true) === true ? `` : `visually-hidden`}">
+                      ${Object.values(this._repeatingDays).some((it) => it === true) ? `<fieldset class="card__repeat-days">
                         <div class="card__repeat-days-inner">
                           <input
                             class="visually-hidden card__repeat-day-input"
@@ -256,9 +252,8 @@ export class CardEdit extends CardComponent {
                             >su</label
                           >
                         </div>
-                      </fieldset>
+                      </fieldset>` : ``}
                     </div>
-
                     <div class="card__hashtag">
                       <div class="card__hashtag-list">
 

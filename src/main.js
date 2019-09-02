@@ -17,7 +17,6 @@ const boardContainer = new Board();
 const taskMocks = mockArray;
 let tasksContainer = document.querySelector(`.board__tasks`);
 let boardController = new BoardController(tasksContainer, taskMocks);
-console.log(mockArray);
 
 // Render function
 

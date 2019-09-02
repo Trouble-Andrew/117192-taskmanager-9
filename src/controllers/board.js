@@ -56,7 +56,6 @@ export class BoardController {
   _renderTask(task) {
     const taskController = new CardController(this._taskList, task, this._onDataChange, this._onChangeView);
     this._subscriptions.push(taskController.setDefaultView.bind(taskController));
-    task.dueDate = task.dateSwitch === false ? null : task.dueDate;
   }
 
   _onChangeView() {

@@ -1,5 +1,6 @@
 import {CardEdit} from './card-edit.js';
 import {CardComponent} from './card-component.js';
+import moment from 'moment';
 
 export class Card extends CardComponent {
 
@@ -52,7 +53,7 @@ export class Card extends CardComponent {
                     ${this._dateSwitch === true ? `<div class="card__dates">
                       <div class="card__date-deadline">
                         <p class="card__input-deadline-wrap">
-                          <span class="card__date">${this._dateSwitch === true ? this._dueDate.toDateString() : ``}</span>
+                          <span class="card__date">${this._dateSwitch === true ? moment(this._dueDate).format(`DD MMMM`) : ``}</span>
                           <span class="card__time">${this._dateSwitch === true ? this._dueDate.getHours() : ``}:${this._dateSwitch === true ? this._dueDate.getMinutes() : ``}</span>
                         </p>
                       </div>

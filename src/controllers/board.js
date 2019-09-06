@@ -18,6 +18,8 @@ export class BoardController {
     this._subscriptions = [];
     this._onChangeView = this._onChangeView.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
+    this._onSortLinkClick = this._onSortLinkClick.bind(this);
+    this._onloadMoreButtonClick = this._onloadMoreButtonClick.bind(this);
   }
 
   init() {
@@ -30,9 +32,9 @@ export class BoardController {
       this._renderTask(this._tasks[i]);
     }
 
-    this._sort.addEvent(`click`, this._onSortLinkClick.bind(this));
+    this._sort.addEvent(`click`, this._onSortLinkClick);
 
-    this._loadBtn.addEvent(`click`, this._onloadMoreButtonClick.bind(this));
+    this._loadBtn.addEvent(`click`, this._onloadMoreButtonClick);
   }
 
   _renderBoard(tasks) {

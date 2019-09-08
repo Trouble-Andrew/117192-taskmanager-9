@@ -2,24 +2,28 @@ import {Board} from './../components/board.js';
 import {CardList} from './../components/card-list.js';
 import {Sort} from './../components/sort.js';
 import {LoadButton} from './../components/load-button.js';
-import {CardController} from './../controllers/card.js';
-import {render, unrender, Position, removeElement} from './../utils.js';
+import {TaskListController} from './task-list.js';
+import {render, unrender, Position} from './../utils.js';
+
+const TASKS_IN_ROW = 8;
 
 export class BoardController {
-  constructor(container, tasks) {
+  constructor(container, onDataChange) {
     this._container = container;
-    this._tasks = tasks;
+    this._tasks = [];
+    this._onDataChangeMain = onDataChange;
     this._board = new Board();
     this._sort = new Sort();
     this._taskList = new CardList();
-    this._countVariable = 8;
     this._CARD_COUNT = 8;
+    this._showedTasks = this._CARD_COUNT;
     this._loadBtn = new LoadButton();
-    this._subscriptions = [];
-    this._onChangeView = this._onChangeView.bind(this);
-    this._onDataChange = this._onDataChange.bind(this);
     this._onSortLinkClick = this._onSortLinkClick.bind(this);
     this._onloadMoreButtonClick = this._onloadMoreButtonClick.bind(this);
+
+    this._taskListController = new TaskListController(this._taskList.getElement(), this._onDataChange.bind(this));
+
+    this.init();
   }
 
   init() {
@@ -28,45 +32,45 @@ export class BoardController {
     render(this._board.getElement(), this._taskList.getElement(), Position.BEFOREEND);
     render(this._board.getElement(), this._loadBtn.getElement(), Position.BEFOREEND);
 
-    for (let i = 0; i < this._CARD_COUNT; i++) {
-      this._renderTask(this._tasks[i]);
-    }
-
     this._sort.addEvent(`click`, this._onSortLinkClick);
 
     this._loadBtn.addEvent(`click`, this._onloadMoreButtonClick);
   }
 
-  _renderBoard(tasks) {
-    this._countVariable = 8;
-    unrender(this._taskList.getElement());
-    unrender(this._loadBtn.getElement());
-
-    this._taskList.removeElement();
-    if (this._tasks[this._countVariable + 1]) {
-      render(this._board.getElement(), this._taskList.getElement(), Position.BEFOREEND);
-      for (let i = 0; i < this._CARD_COUNT; i++) {
-        this._renderTask(tasks[i]);
-      }
-      render(this._board.getElement(), this._loadBtn.getElement(), Position.BEFOREEND);
-      this._loadBtn.addEvent(`click`, this._onloadMoreButtonClick.bind(this));
-    } else {
-      this._tasks.forEach((task) => this._renderTask(task));
-    }
+  createTask() {
+    this._taskListController.createTask();
   }
 
-  _renderTask(task) {
-    const taskController = new CardController(this._taskList, task, this._onDataChange, this._onChangeView);
-    this._subscriptions.push(taskController.setDefaultView.bind(taskController));
+  _renderBoard() {
+    render(this._board.getElement(), this._taskList.getElement(), Position.BEFOREEND);
+
+    unrender(this._loadBtn.getElement());
+    this._loadBtn.removeElement();
+    if (this._showedTasks < this._tasks.length) {
+      render(this._board.getElement(), this._loadBtn.getElement(), Position.BEFOREEND);
+    }
+
+    this._taskListController.setTasks(this._tasks.slice(0, this._showedTasks));
+    this._loadBtn.addEvent(`click`, this._onloadMoreButtonClick);
   }
 
   _onChangeView() {
     this._subscriptions.forEach((it) => it());
   }
 
-  _onDataChange(newData, oldData) {
-    this._tasks[this._tasks.findIndex((it) => it === oldData)] = newData;
-    this._renderBoard(this._tasks);
+  _onDataChange(tasks) {
+    // this._tasks = [...tasks, ...this._tasks.slice(this._showedTasks)];
+    this._tasks = tasks;
+    this._onDataChangeMain(this._tasks);
+
+    this._renderBoard();
+  }
+
+  _setTasks(tasks) {
+    this._tasks = tasks;
+    this._showedTasks = TASKS_IN_ROW;
+
+    this._renderBoard();
   }
 
   _onSortLinkClick(evt) {
@@ -81,27 +85,38 @@ export class BoardController {
     switch (evt.target.dataset.sortType) {
       case `date-up`:
         const sortedByDateUpTasks = this._tasks.slice().sort((a, b) => a.dueDate - b.dueDate);
-        sortedByDateUpTasks.forEach((taskMock) => this._renderTask(taskMock));
+        this._taskListController.setTasks(sortedByDateUpTasks);
         break;
       case `date-down`:
         const sortedByDateDownTasks = this._tasks.slice().sort((a, b) => b.dueDate - a.dueDate);
-        sortedByDateDownTasks.forEach((taskMock) => this._renderTask(taskMock));
+        this._taskListController.setTasks(sortedByDateDownTasks);
         break;
       case `default`:
-        this._tasks.forEach((taskMock) => this._renderTask(taskMock));
+        this._taskListController.setTasks(this._tasks);
         break;
     }
   }
 
   _onloadMoreButtonClick() {
-    for (let i = 0; i < this._CARD_COUNT; i++) {
-      if (this._tasks[this._countVariable + 1]) {
-        this._renderTask(this._tasks[this._countVariable + 1]);
-        this._countVariable += 1;
-      } else {
-        removeElement(this._loadBtn.getElement());
-        this._loadBtn.removeElement();
-      }
+    this._taskListController.addTasks(this._tasks.slice(this._showedTasks, this._showedTasks + TASKS_IN_ROW));
+
+    this._showedTasks += TASKS_IN_ROW;
+
+    if (this._showedTasks >= this._tasks.length) {
+      unrender(this._loadBtn.getElement());
+      this._loadBtn.removeElement();
     }
+  }
+
+  hide() {
+    this._board.getElement().classList.add(`visually-hidden`);
+  }
+
+  show(tasks) {
+    if (tasks !== this._tasks) {
+      this._setTasks(tasks);
+    }
+
+    this._board.getElement().classList.remove(`visually-hidden`);
   }
 }

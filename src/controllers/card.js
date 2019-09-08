@@ -6,9 +6,13 @@ import {DeleteButton} from './../components/delete-button.js';
 import {SaveButton} from './../components/save-button.js';
 import {EditButton} from './../components/edit-button.js';
 
+export const Mode = {
+  ADDING: `adding`,
+  DEFAULT: `default`,
+};
 
 export class CardController {
-  constructor(container, data, onDataChange, onChangeView) {
+  constructor(container, data, mode, onDataChange, onChangeView) {
     this._container = container;
     this._data = data;
     this._onChangeView = onChangeView;
@@ -18,11 +22,24 @@ export class CardController {
     this._deleteBtn = new DeleteButton();
     this._saveBtn = new SaveButton();
     this._editBtn = new EditButton();
+    this._mode = mode;
+    this._currentView = this._cardEdit;
 
-    this.create();
+    this.create(mode);
   }
 
-  create() {
+  create(mode) {
+    let renderPosition = Position.BEFOREEND;
+    this._currentView = this._cardView;
+
+    if (mode === Mode.ADDING) {
+      renderPosition = Position.AFTERBEGIN;
+      this._currentView = this._cardEdit;
+    }
+
+    render(this._container, this._currentView.getElement(), renderPosition);
+    render(this._cardEdit.getElement().querySelector(`.card__status-btns`), this._saveBtn.getElement(), Position.BEFOREEND);
+    render(this._cardEdit.getElement().querySelector(`.card__status-btns`), this._deleteBtn.getElement(), Position.BEFOREEND);
     render(this._cardView.getElement().querySelector(`.card__control`), this._editBtn.getElement(), Position.AFTERBEGIN);
 
     if (this._data.dueDate !== null) {
@@ -37,31 +54,29 @@ export class CardController {
 
     this._cardEdit.getElement().querySelector(`textarea`)
       .addEventListener(`focus`, () => {
-        document.removeEventListener(`keydown`, this._onEscKeyDown);
+        document.removeEventListener(`keydown`, this._onEscKeyDown.bind(this));
       });
 
     this._cardEdit.getElement().querySelector(`textarea`)
       .addEventListener(`blur`, () => {
-        document.addEventListener(`keydown`, this._onEscKeyDown);
+        document.addEventListener(`keydown`, this._onEscKeyDown.bind(this));
       });
 
     this._saveBtn.addEvent(`click`, this._saveEditCard.bind(this));
 
     this._deleteBtn.addEvent(`click`, this._removeEditCard.bind(this));
-
-    render(this._container.getElement(), this._cardView.getElement(), Position.BEFOREEND);
   }
 
   setDefaultView() {
-    if (this._container.getElement().contains(this._cardEdit.getElement())) {
-      this._container.getElement().replaceChild(this._cardView.getElement(), this._cardEdit.getElement());
+    if (this._container.contains(this._cardEdit.getElement())) {
+      this._container.replaceChild(this._cardView.getElement(), this._cardEdit.getElement());
     }
   }
 
   _removeEditCard() {
     removeElement(this._cardEdit.getElement());
     document.removeEventListener(`keydown`, this._onEscKeyDown);
-    this._cardEdit.removeElement();
+    this._onDataChange(null, this._data);
   }
 
   _saveEditCard(evt) {
@@ -88,24 +103,28 @@ export class CardController {
         'su': false,
       }),
     };
-    this._onDataChange(entry, this._data);
+    this._onDataChange(entry, this._mode === Mode.DEFAULT ? this._data : null);
     document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
   _openEditCard(evt) {
     evt.preventDefault();
     this._onChangeView();
-    this._container.getElement().replaceChild(this._cardEdit.getElement(), this._cardView.getElement());
-
-    render(this._cardEdit.getElement().querySelector(`.card__status-btns`), this._saveBtn.getElement(), Position.BEFOREEND);
-    render(this._cardEdit.getElement().querySelector(`.card__status-btns`), this._deleteBtn.getElement(), Position.BEFOREEND);
+    this._container.replaceChild(this._cardEdit.getElement(), this._cardView.getElement());
     document.addEventListener(`keydown`, this._onEscKeyDown.bind(this));
   }
 
   _onEscKeyDown(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
-      this._container.getElement().replaceChild(this._cardView.getElement(), this._cardEdit.getElement());
-      document.removeEventListener(`keydown`, this._onEscKeyDown);
+      if (this._mode === Mode.DEFAULT) {
+        if (this._container.contains(this._cardEdit.getElement())) {
+          this._container.replaceChild(this._cardView.getElement(), this._cardEdit.getElement());
+        }
+      } else if (this._mode === Mode.ADDING) {
+        this._container.removeChild(this._currentView.getElement());
+      }
+
+      document.removeEventListener(`keydown`, this.onEscKeyDown);
     }
   }
 }

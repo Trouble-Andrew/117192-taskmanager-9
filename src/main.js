@@ -13,15 +13,16 @@ import 'flatpickr/dist/themes/light.css';
 export const CARD_COUNT = 9;
 const mainContainer = document.querySelector(`.main`);
 const menuContainer = document.querySelector(`.main__control`);
-const taskMocks = mockArray;
+let taskMocks = mockArray;
 let boardController;
 const siteMenu = new SiteMenu();
 const statistics = new Statistics();
 const search = new Search();
 const onDataChange = (tasks) => {
   taskMocks = tasks;
+  console.log(taskMocks);
 };
-
+console.log(taskMocks);
 // Render function
 
 const renderFilters = (container) => {

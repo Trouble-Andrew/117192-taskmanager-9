@@ -32,14 +32,22 @@ export class SearchController {
 
     this._searchResult.getElement().querySelector(`.result__back`)
       .addEventListener(`click`, () => {
-        this._search.getElement().querySelector(`input`).value = ``;
+        this._search.querySelector(`input`).value = ``;
         this._onBackButtonClick();
       });
     this._search.querySelector(`input`)
       .addEventListener(`keyup`, (evt) => {
         const {value} = evt.target;
         const tasks = this._tasks.filter((task) => {
-          return task.description.includes(value);
+          let result;
+          if (task.description.includes(value)) {
+            result = task.description.includes(value);
+          } else if (new Date(task.dueDate).toLocaleString().indexOf(value) >= 0) {
+            result = new Date(task.dueDate).toLocaleString();
+          } else if (`#` + value) {
+            result = task.tags.includes(value.replace(`#`, ``));
+          }
+          return result;
         });
 
         this._showSearchResult(value, tasks);

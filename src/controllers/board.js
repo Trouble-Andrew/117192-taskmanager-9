@@ -59,7 +59,6 @@ export class BoardController {
   }
 
   _onDataChange(tasks) {
-    // this._tasks = [...tasks, ...this._tasks.slice(this._showedTasks)];
     this._tasks = tasks;
     this._onDataChangeMain(this._tasks);
 

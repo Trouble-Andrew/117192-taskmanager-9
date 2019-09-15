@@ -12,7 +12,8 @@ export const shuffle = function (arr) {
 
 export const Position = {
   AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
+  BEFOREEND: `beforeend`,
+  BEFORE: `before`,
 };
 
 export const createElement = (template) => {
@@ -32,6 +33,9 @@ export const render = (container, element, place) => {
       break;
     case Position.BEFOREEND:
       container.append(element);
+      break;
+    case Position.BEFORE:
+      container.before(element);
       break;
   }
 };

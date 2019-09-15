@@ -1,9 +1,11 @@
 import {Board} from './../components/board.js';
+import {Filter} from './../components/filters.js';
 import {CardList} from './../components/card-list.js';
 import {Sort} from './../components/sort.js';
 import {LoadButton} from './../components/load-button.js';
 import {TaskListController} from './task-list.js';
 import {render, unrender, Position} from './../utils.js';
+import * as _ from 'lodash';
 
 const TASKS_IN_ROW = 8;
 
@@ -19,7 +21,10 @@ export class BoardController {
     this._showedTasks = this._CARD_COUNT;
     this._loadBtn = new LoadButton();
     this._onSortLinkClick = this._onSortLinkClick.bind(this);
+    this._onFilterLinkClick = this._onFilterLinkClick.bind(this);
     this._onloadMoreButtonClick = this._onloadMoreButtonClick.bind(this);
+
+    this.filter = new Filter();
 
     this._taskListController = new TaskListController(this._taskList.getElement(), this._onDataChange.bind(this));
 
@@ -28,11 +33,16 @@ export class BoardController {
 
   init() {
     render(this._container, this._board.getElement(), Position.BEFOREEND);
+    render(this._board.getElement(), this.filter.getElement(), Position.BEFORE);
     render(this._board.getElement(), this._sort.getElement(), Position.AFTERBEGIN);
     render(this._board.getElement(), this._taskList.getElement(), Position.BEFOREEND);
     render(this._board.getElement(), this._loadBtn.getElement(), Position.BEFOREEND);
 
+    this.filter.getValue(this._tasks);
+
     this._sort.addEvent(`click`, this._onSortLinkClick);
+
+    this.filter.addEvent(`click`, this._onFilterLinkClick);
 
     this._loadBtn.addEvent(`click`, this._onloadMoreButtonClick);
   }
@@ -42,6 +52,7 @@ export class BoardController {
   }
 
   _renderBoard() {
+    this.filter.getValue(this._tasks);
     render(this._board.getElement(), this._taskList.getElement(), Position.BEFOREEND);
 
     unrender(this._loadBtn.getElement());
@@ -94,6 +105,56 @@ export class BoardController {
         this._taskListController.setTasks(this._tasks);
         break;
     }
+  }
+
+  _onFilterLinkClick(evt) {
+    evt.preventDefault();
+    switch (evt.target.control.id) {
+      case `filter__all`:
+        this._taskListController.setTasks(this._tasks);
+        break;
+      case `filter__overdue`:
+        const filteredOverdue = _.filter(this._tasks, (o) => o.dueDate < Date.now());
+        this._taskListController.setTasks(filteredOverdue);
+        break;
+      case `filter__today`:
+        let todayCount = [];
+        this._tasks.forEach(function (task) {
+          let time = new Date(task.dueDate).toDateString();
+          let today = new Date().toDateString();
+          if (time === today) {
+            todayCount.push(task);
+          }
+        });
+        this._taskListController.setTasks(todayCount);
+        break;
+      case `filter__repeating`:
+        let repeatingTasks = [];
+        this._tasks.forEach(function (task) {
+          let taskArray = Object.keys(task.repeatingDays).map((i) => task.repeatingDays[i]);
+          taskArray = Object.keys(taskArray).some((day) => taskArray[day]) ? repeatingTasks.push(task) : null;
+        });
+        this._taskListController.setTasks(repeatingTasks);
+        break;
+      case `filter__tags`:
+        let tagsTasks = [];
+        this._tasks.forEach(function (task) {
+          if (task.tags.length > 0) {
+            tagsTasks.push(task);
+          }
+        });
+        this._taskListController.setTasks(tagsTasks);
+        break;
+      case `filter__archive`:
+        const filteredArchive = _.filter(this._tasks, (o) => o.isArchive === true);
+        this._taskListController.setTasks(filteredArchive);
+        break;
+      case `filter__favorites`:
+        const filteredFavorites = _.filter(this._tasks, (o) => o.isFavorite === true);
+        this._taskListController.setTasks(filteredFavorites);
+        break;
+    }
+    evt.target.control.checked = true;
   }
 
   _onloadMoreButtonClick() {

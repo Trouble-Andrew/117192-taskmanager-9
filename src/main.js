@@ -1,10 +1,9 @@
 import {Search} from './components/search.js';
-import {getFiltersMarkup, getFilter} from './components/filters.js';
 import {SiteMenu} from './components/menu.js';
-import {Statistics} from './components/statistics.js';
 import {BoardController} from './controllers/board.js';
 import {SearchController} from './controllers/search.js';
-import {createElement, render, Position} from './utils.js';
+import {StatisticController} from './controllers/statistic.js';
+import {createElement, render, Position, unrender} from './utils.js';
 import mockArray from './data.js';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
@@ -15,31 +14,20 @@ const mainContainer = document.querySelector(`.main`);
 const menuContainer = document.querySelector(`.main__control`);
 let taskMocks = mockArray;
 let boardController;
+let statisticController;
 const siteMenu = new SiteMenu();
-const statistics = new Statistics();
 const search = new Search();
 const onDataChange = (tasks) => {
   taskMocks = tasks;
-  console.log(taskMocks);
 };
-console.log(taskMocks);
 // Render function
-
-const renderFilters = (container) => {
-  container.insertAdjacentHTML(`beforeend`, new Array(1)
-    .fill(``)
-    .map(getFilter)
-    .map(getFiltersMarkup)
-    .join(``));
-};
 
 render(menuContainer, siteMenu.getElement(), Position.BEFOREEND);
 render(mainContainer, search.getElement(), Position.BEFOREEND);
-renderFilters(mainContainer);
 boardController = new BoardController(mainContainer, onDataChange);
 
 const onSearchBackButtonClick = () => {
-  statistics.getElement().classList.add(`visually-hidden`);
+  statisticController.hide();
   searchController.hide();
   boardController.show(taskMocks);
 };
@@ -60,17 +48,23 @@ siteMenu.getElement().addEventListener(`change`, (evt) => {
 
   switch (evt.target.id) {
     case tasksId:
-      statistics.getElement().classList.add(`visually-hidden`);
+      statisticController.hide();
       searchController.hide();
+      unrender(mainContainer.querySelector(`.statistic`));
       boardController.show(taskMocks);
       break;
     case statisticId:
       boardController.hide();
       searchController.hide();
-      statistics.getElement().classList.remove(`visually-hidden`);
+      statisticController = new StatisticController(mainContainer, taskMocks);
+      statisticController.show();
       break;
     case newTaskId:
       boardController.createTask();
+      if (statisticController) {
+        statisticController.hide();
+      }
+      unrender(mainContainer.querySelector(`.statistic`));
       boardController.show(taskMocks);
       siteMenu.getElement().querySelector(`#${tasksId}`).checked = true;
       break;
@@ -78,7 +72,7 @@ siteMenu.getElement().addEventListener(`change`, (evt) => {
 });
 
 createElement(search.getElement().addEventListener(`click`, () => {
-  statistics.getElement().classList.add(`visually-hidden`);
+  statisticController.hide();
   boardController.hide();
   searchController.show(taskMocks);
 }));

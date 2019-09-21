@@ -4,8 +4,9 @@ import moment from 'moment';
 
 export class Card extends CardComponent {
 
-  constructor({description, dueDate, tags, color, repeatingDays, dateSwitch, repeatSwitch}) {
-    super({description, dueDate, tags, color, repeatingDays, dateSwitch, repeatSwitch});
+  constructor({id, description, dueDate, tags, color, repeatingDays, dateSwitch, repeatSwitch}) {
+    super({id, description, dueDate, tags, color, repeatingDays, dateSwitch, repeatSwitch});
+    this.id = id;
     this._allObj = {description, dueDate, tags, color, repeatingDays, dateSwitch, repeatSwitch};
     this._taskEdit = new CardEdit(this._allObj);
     this._tasksContainer = document.querySelector(`.board__tasks`);

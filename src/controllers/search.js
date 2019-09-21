@@ -5,10 +5,11 @@ import {SearchResultInfo} from './../components/search-result-info.js';
 import {TaskListController} from './task-list.js';
 
 export class SearchController {
-  constructor(container, search, onBackButtonClick) {
+  constructor(container, search, onBackButtonClick, onDataChange) {
     this._container = container;
     this._search = search;
     this._onBackButtonClick = onBackButtonClick;
+    this._onDataChangePage = onDataChange;
 
     this._tasks = [];
 
@@ -80,7 +81,7 @@ export class SearchController {
     this._taskListController.setTasks(tasks);
   }
 
-  _onDataChange(tasks) {
-    this._tasks = tasks;
+  _onDataChange(actionType, update) {
+    this._onDataChangePage(actionType, update, true);
   }
 }

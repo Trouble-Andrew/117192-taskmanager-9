@@ -16,6 +16,12 @@ export const Position = {
   BEFORE: `before`,
 };
 
+export const Action = {
+  DELETE: `delete`,
+  CREATE: `create`,
+  UPDATE: `update`
+};
+
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);
   newElement.innerHTML = template;

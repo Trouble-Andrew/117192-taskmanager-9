@@ -26,7 +26,7 @@ export class BoardController {
 
     this.filter = new Filter();
 
-    this._taskListController = new TaskListController(this._taskList.getElement(), this._onDataChange.bind(this));
+    this._taskListController = new TaskListController(this._taskList.getElement(), this._onDataChangeMain.bind(this));
 
     this.init();
   }
@@ -51,7 +51,7 @@ export class BoardController {
     this._taskListController.createTask();
   }
 
-  _renderBoard() {
+  renderBoard() {
     this.filter.getValue(this._tasks);
     render(this._board.getElement(), this._taskList.getElement(), Position.BEFOREEND);
 
@@ -69,18 +69,18 @@ export class BoardController {
     this._subscriptions.forEach((it) => it());
   }
 
-  _onDataChange(tasks) {
-    this._tasks = tasks;
-    this._onDataChangeMain(this._tasks);
-
-    this._renderBoard();
-  }
+  // _onDataChange(tasks) {
+  //   this._tasks = tasks;
+  //   this._onDataChangeMain(this._tasks);
+  //
+  //   this.renderBoard();
+  // }
 
   _setTasks(tasks) {
     this._tasks = tasks;
     this._showedTasks = TASKS_IN_ROW;
 
-    this._renderBoard();
+    this.renderBoard();
   }
 
   _onSortLinkClick(evt) {
